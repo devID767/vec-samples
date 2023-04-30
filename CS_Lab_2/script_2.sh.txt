@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Компіляція та вимірювання часу роботи програми з різними оптимізаціями
+echo "Compiling and measuring time for different optimization levels..."
+for opt in 0 1 2 3 s; do
+    g++ -O${opt} cpu_benchmark.cpp -o cpu_benchmark_O${opt}
+    echo "Optimization level -O${opt}:"
+    /usr/bin/time -f "Execution time: %E seconds" ./cpu_benchmark_O${opt}
+done
+
+# Отримання переліку розширень процесору
+echo "Getting list of supported CPU extensions..."
+echo | g++ -E -dM -x c++ - | grep -E "SSE|AVX|FMA"
+
+# Компіляція та вимірювання часу роботи програми з використанням кожного розширення окремо
+echo "Compiling and measuring time for each CPU extension..."
+for ext in SSE SSE2 SSE3 SSSE3 SSE4.1 SSE4.2 AVX AVX2 FMA; do
+    icpc -x${ext} -O3 cpu_benchmark.cpp -o cpu_benchmark_${ext}
+    echo "Extension -x${ext}:"
+    /usr/bin/time -f "Execution time: %E seconds" ./cpu_benchmark_${ext}
+done

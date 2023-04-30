@@ -1,0 +1,29 @@
+#!/usr/bin/bash
+ml icc
+echo "start - O1"
+icc -std=c++11 -O1 program.cpp -o program_O1
+time for i in {1..10};
+do
+./program_O1
+done
+echo "start - O2"
+icc -std=c++11 -O2 program.cpp -o program_O2
+time for i in {1..10};
+do
+./program_O2
+done
+echo "start - O3"
+icc -std=c++11 -O3 program.cpp -o program_O3
+time for i in {1..10};
+do
+./program_O3
+done
+for j in sse2 sse3 sse4.1 sse4.2 avx ATOM_SSE4.2 ATOM_SSSE3;
+do
+echo "start - -x$j"
+icc -x$j -std=c++11 program.cpp -o program_$j
+time for i in {1..10};
+do
+./program_$j
+done
+done
